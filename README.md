@@ -31,48 +31,67 @@ git clone <repo-url>
 cd tayo_rag
 ```
 
-### 2. Install dependencies
-
-With `uv` (recommended):
-```bash
-uv venv
-uv pip install -r requirements.txt
-```
-
-Or with pip:
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Set up your environment
+### 2. Set up your environment
 
 ```bash
 cp .env.example .env
 ```
 
 Open `.env` and add your Groq API key:
+```
 GROQ_API_KEY=your_groq_api_key_here
+```
 
 Get a free Groq API key at https://console.groq.com
 
-### 4. Add your documents
+### 3. Create required folders
 
-Place all your `.docx` and `.pdf` files inside the `docs/` folder. These are gitignored and will not be uploaded to GitHub.
-
-### 5. Run the server
+These two folders are gitignored and must be created manually after cloning:
 
 ```bash
-uv run uvicorn app.main:app --port 8080 --reload
+mkdir docs
+mkdir vectorstore
 ```
 
-## Usage
+- `docs/` — where you place your `.docx` and `.pdf` files before ingesting
+- `vectorstore/` — where ChromaDB will persist the embeddings after `/ingest` runs
 
-Once the server is running, open your browser at:
-http://127.0.0.1:8080/docs
+### 4. Install dependencies
 
-This opens the interactive Swagger UI where you can use all endpoints.
+With pip:
+```bash
+pip install -r requirements.txt
+```
 
-### Endpoints
+Or with uv:
+```bash
+uv sync
+```
+
+### 5. Add your documents
+
+Drop all your `.docx` and `.pdf` files into the `docs/` folder. These are gitignored and will never be uploaded to GitHub.
+
+### 6. Run the server
+
+```bash
+uvicorn app.main:app --port 8080 --reload
+```
+
+### 7. Ingest your documents
+
+Open http://localhost:8080/docs in your browser and call `POST /ingest` once. This loads, chunks, and embeds all files in `docs/` and saves the vectorstore to disk. You only need to re-run this if you add new documents.
+
+### 8. Start querying
+
+Use `POST /query` with:
+```json
+{
+  "question": "your question here"
+}
+```
+
+## Endpoints
 
 #### `POST /ingest`
 Loads all documents from `docs/`, chunks them, embeds them, and saves the vectorstore to disk. Run this once after adding your documents. You only need to re-run it if you add new documents.
