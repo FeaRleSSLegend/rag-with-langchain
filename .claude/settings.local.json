@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "Bash(python -c \"from app.main import app; from app.ingest import run_ingest; from app.retriever import query_rag; print\\('All imports OK'\\)\")",
+      "Bash(pip --version)",
+      "Bash(python -m pip install -r c:/Users/MSI/Projects/tayo_rag/requirements.txt)",
+      "Bash(python -m uvicorn app.main:app --host 0.0.0.0 --port 8000)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(kill %1)"
+    ]
+  }
+}
